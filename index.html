@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aktivitetsväljaren</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <main class="container">
+    <header>
+      <div class="badge"><i class="fa-solid fa-crosshairs"></i>Hitta din aktivitet</div>
+      <h1>AKTIVITETS<br><span class="accent">VÄLJAREN</span></h1>
+      <p class="intro">Svara på tre frågor – vi föreslår den perfekta aktiviteten för dig och ditt sällskap!</p>
+    </header>
+
+    <section class="form-section">
+
+      <!-- Val 1: Antal personer -->
+      <div class="form-group" id="group-persons">
+        <label><i class="fa-solid fa-users"></i> Hur många är ni?</label>
+        <div class="options-row">
+          <button class="opt-btn" data-group="persons" data-value="solo">Ensam</button>
+          <button class="opt-btn" data-group="persons" data-value="duo">2 personer</button>
+          <button class="opt-btn" data-group="persons" data-value="small">3–5 pers.</button>
+          <button class="opt-btn" data-group="persons" data-value="big">6+ pers.</button>
+        </div>
+      </div>
+
+      <!-- Val 2: Tillgänglig tid -->
+      <div class="form-group" id="group-time">
+        <label><i class="fa-solid fa-clock"></i> Hur mycket tid har ni?</label>
+        <div class="options-row">
+          <button class="opt-btn" data-group="time" data-value="quick">Under 30 min</button>
+          <button class="opt-btn" data-group="time" data-value="medium">30–90 min</button>
+          <button class="opt-btn" data-group="time" data-value="long">Flera timmar</button>
+        </div>
+      </div>
+
+      <!-- Val 3: Energinivå -->
+      <div class="form-group" id="group-energy">
+        <label><i class="fa-solid fa-bolt"></i> Vilken energinivå passar?</label>
+        <div class="options-row">
+          <button class="opt-btn" data-group="energy" data-value="low">Lugnt &amp; avslappnat</button>
+          <button class="opt-btn" data-group="energy" data-value="medium">Lagom aktiv</button>
+          <button class="opt-btn" data-group="energy" data-value="high">Fullt ös!</button>
+        </div>
+      </div>
+
+      <button class="cta-btn" id="findBtn" disabled>
+        <span>Hitta aktivitet</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+
+    </section>
+
+    <!-- Resultatfält -->
+    <section class="result-section" id="resultSection" aria-live="polite">
+      <div class="result-card" id="resultCard">
+        <div class="result-icon" id="resultIcon"></div>
+        <h2 id="resultTitle"></h2>
+        <p id="resultDesc"></p>
+        <button class="reset-btn" id="resetBtn">
+          <i class="fa-solid fa-rotate-left"></i> Försök igen
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

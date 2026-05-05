@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ascendancy Skill Tree</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Selection screen -->
+  <div id="select-screen">
+    <div class="select-prompt">
+      <div class="pi">✦</div>
+      <p>Select a divine patron</p>
+    </div>
+    <div class="god-cards">
+      <div class="god-card gc-cat" onclick="switchGod('cat')">
+        <span class="gc-icon">🐱</span>
+        <span class="gc-name">Sekhara</span>
+        <span class="gc-flavor">Her eyes see all things, even the fate of empires.</span>
+      </div>
+      <div class="god-card gc-death" onclick="switchGod('death')">
+        <span class="gc-icon">💀</span>
+        <span class="gc-name">Mortvael</span>
+        <span class="gc-flavor">He does not end things — he transforms them.</span>
+      </div>
+      <div class="god-card gc-trade" onclick="switchGod('trade')">
+        <span class="gc-icon">⚖️</span>
+        <span class="gc-name">Aurentis</span>
+        <span class="gc-flavor">All roads, all winds, all rivers exist to move coin.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tree screen -->
+  <div id="tree-screen">
+    <div class="tree-header">
+      <button class="back-btn" onclick="goBack()">← Back</button>
+      <span class="th-name" id="ib-name">—</span>
+      <span class="th-flavor" id="ib-desc"></span>
+      <span class="th-pts" id="ib-pts">0 / 30</span>
+      <button class="reset-btn" onclick="resetTree()">Reset</button>
+    </div>
+
+    <div id="tree-area">
+      <canvas id="c"></canvas>
+
+      <div class="tt" id="tt">
+        <div class="tt-inner">
+          <div class="tt-title" id="tt-t"></div>
+          <div class="tt-type" id="tt-ty"></div>
+          <div class="tt-desc" id="tt-d"></div>
+          <div class="tt-val" id="tt-v"></div>
+        </div>
+      </div>
+
+      <div class="zoom-controls">
+        <button class="zoom-btn" onclick="adjustZoom(0.15)">+</button>
+        <button class="zoom-btn" onclick="adjustZoom(-0.15)">−</button>
+        <button class="zoom-btn" onclick="resetView()">⌂</button>
+      </div>
+    </div>
+
+    <div class="info-bar">
+      <span id="node-hover-desc">Hover a node</span>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

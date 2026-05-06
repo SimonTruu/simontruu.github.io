@@ -191,7 +191,7 @@ function drawTree(god){
   const fillSelected = dark;
 
   ctx.clearRect(0,0,cw,ch);
-  ctx.fillStyle='#3a332d';
+  ctx.fillStyle='#1a1816';
   ctx.fillRect(0,0,cw,ch);
 
   ctx.save();

@@ -117,7 +117,7 @@ html,body{
 .back-btn{
     background:transparent;
     border:1px solid #2a2218;
-    color:#4a3e2e;
+    color:#816e54;
     font-family:'Cinzel',serif;font-size:10px;
     letter-spacing:1px;
     padding:5px 12px;
@@ -154,7 +154,7 @@ html,body{
 .reset-btn{
     background:transparent;
     border:1px solid #2a2218;
-    color:#4a3e2e;
+    color:#8b7558;
     font-family:'Cinzel',serif;
     font-size:10px;
     letter-spacing:1px;
@@ -202,7 +202,7 @@ canvas{
     height:28px;
     background:#0c0a07;
     border:1px solid #2a2218;
-    color:#4a3e2e;
+    color:#927959;
     font-size:16px;
     line-height:1;
     cursor:pointer;

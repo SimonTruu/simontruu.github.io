@@ -10,6 +10,25 @@ function n(id,x,y,type,label,val,desc,deps){
   return{id,x,y,type,label,val,desc,deps:deps||[]};
 }
 
+function dimColor(hex, factor = 0.5) {
+  const r = Math.floor(parseInt(hex.slice(1,3),16) * factor);
+  const g = Math.floor(parseInt(hex.slice(3,5),16) * factor);
+  const b = Math.floor(parseInt(hex.slice(5,7),16) * factor);
+  return `rgb(${r},${g},${b})`;
+}
+
+function mixWithWhite(hex, amount = 0.15) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+
+  const nr = Math.floor(r + (255 - r) * amount);
+  const ng = Math.floor(g + (255 - g) * amount);
+  const nb = Math.floor(b + (255 - b) * amount);
+
+  return `rgb(${nr},${ng},${nb})`;
+}
+
 function mkCat(){
   const nodes=[
     n('c0',340,44,'start','Sekhara','Ascendancy Start','The Eternal Watcher opens her eyes upon your civilisation.',[]),
@@ -48,7 +67,7 @@ function mkCat(){
     n('cj1',200,778,'keystone','The Watcher\'s Compact','Spies detected, no surprise wars','Fog within 5 tiles of cats/cities is permanently reduced. Enemy spies in your cities are always detected. No civilisation can declare a surprise war on you.',['cm7','cs16']),
     n('cj2',480,778,'keystone','Nine-Life Sovereignty','30% chance cities survive capture','When a city would fall, 30% chance it holds at 1 HP with all units revived. Defeated units have 15% chance to reform at the nearest city after 5 turns.',['cs16','cm8']),
   ];
-  return{nodes,col:'#d4a055',glow:'#c8843a',dim:'#5a3a15',dark:'#1e0e04',name:'Sekhara, the Eternal Watcher',flavor:'Her eyes see all things, even the fate of empires.'};
+  return{nodes,col:'#d4a055',glow:'#c8843a',dim:'#5a3a15',dark:'#52260a',name:'Sekhara, the Eternal Watcher',flavor:'Her eyes see all things, even the fate of empires.'};
 }
 
 function mkDeath(){
@@ -89,7 +108,7 @@ function mkDeath(){
     n('dj1',200,778,'keystone','The Undying Economy','Shades as zero-upkeep workers','Dead citizens reanimate as Shade Workers at 40% output — zero food, zero gold. Up to 50% of your workforce can be Shades. They never rebel, strike, or need housing.',['dm7','ds16']),
     n('dj2',480,778,'keystone','Death Is Not The End','Destroyed cities become undead fortresses','When any city is captured, it collapses into a Mortvael\'s Anchor — an undead fortress loyal to you that generates units, cannot be captured, and yields nothing to destroyers.',['ds16','dm8']),
   ];
-  return{nodes,col:'#8a4fd4',glow:'#7040c8',dim:'#2a1550',dark:'#120820',name:'Mortvael, Lord of the Harvested',flavor:'He does not end things — he transforms them.'};
+  return{nodes,col:'#8a4fd4',glow:'#7040c8',dim:'#2a1550',dark:'#301457',name:'Mortvael, Lord of the Harvested',flavor:'He does not end things — he transforms them.'};
 }
 
 function mkTrade(){
@@ -130,7 +149,7 @@ function mkTrade(){
     n('tj1',200,778,'keystone','The Grand Compact','Trade partners cannot declare war','All civs with active trade routes are permanently friendly. Additionally earn 1 gold per unit of any resource that changes hands anywhere in the world — a global tax.',['tm7','ts16']),
     n('tj2',480,778,'keystone','Monopoly of Heaven','Control one resource globally','Choose a resource: your production +50%, all foreign production pays you 10g/unit, and that resource cannot be traded between others without your permission.',['ts16','tm8']),
   ];
-  return{nodes,col:'#4aad7a',glow:'#38956a',dim:'#154530',dark:'#081e14',name:'Aurentis, the Golden Accord',flavor:'All roads, all winds, all rivers exist to move coin.'};
+  return{nodes,col:'#4aad7a',glow:'#38956a',dim:'#154530',dark:'#144d33',name:'Aurentis, the Golden Accord',flavor:'All roads, all winds, all rivers exist to move coin.'};
 }
 /* ---- INIT ---- */
 gods.cat=mkCat();
@@ -164,9 +183,15 @@ function drawTree(god){
   const sel=selected[god];
   const map=nm(god);
   const cw=canvas.width,ch=canvas.height;
+  const base = col;
+  const dimCol = dimColor(col, 0.35);
+  const midCol = dimColor(col, 0.6);
+  const fillLocked = mixWithWhite(col, 0.08);
+  const fillAvailable = mixWithWhite(col, 0.18);
+  const fillSelected = dark;
 
   ctx.clearRect(0,0,cw,ch);
-  ctx.fillStyle='#080604';
+  ctx.fillStyle='#3a332d';
   ctx.fillRect(0,0,cw,ch);
 
   ctx.save();
@@ -181,16 +206,39 @@ function drawTree(god){
 
   g.nodes.forEach(node=>{
     node.deps.forEach(depId=>{
-      const dep=map[depId];
-      if(!dep) return;
-      const bs=sel.has(node.id)&&sel.has(depId);
-      const es=sel.has(node.id)||sel.has(depId);
-      ctx.globalAlpha=bs?.65:es?.3:.7;
-      ctx.strokeStyle=bs?col:'#2a2010';
-      ctx.lineWidth=bs?2:1;
-      ctx.beginPath();ctx.moveTo(dep.x,dep.y);ctx.lineTo(node.x,node.y);ctx.stroke();
-      ctx.globalAlpha=1;
-    });
+  const dep = map[depId];
+  if(!dep) return;
+
+  const bothSelected = sel.has(node.id) && sel.has(depId);
+  const oneSelected = sel.has(node.id) || sel.has(depId);
+
+  // thickness
+  ctx.lineWidth = bothSelected ? 3 : (oneSelected ? 2.2 : 1.6);
+
+  // color (use god color always)
+  ctx.strokeStyle = bothSelected
+    ? col
+    : (oneSelected ? col + 'aa' : col + '55');
+
+  // brightness / visibility
+  ctx.globalAlpha = bothSelected ? 0.9 : (oneSelected ? 0.7 : 0.5);
+
+  // subtle glow for active paths
+  if(bothSelected){
+    ctx.shadowColor = col;
+    ctx.shadowBlur = 10;
+  } else {
+    ctx.shadowBlur = 0;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(dep.x, dep.y);
+  ctx.lineTo(node.x, node.y);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
+});
   });
 
   g.nodes.forEach(node=>{
@@ -246,9 +294,13 @@ function drawTree(god){
         i===0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);
       }
       ctx.closePath();
-      ctx.fillStyle=isSel?dark:'#0a0806';
+      ctx.fillStyle = isSel
+  ? dark
+  : (canUnlk ? dimColor(col, 0.15) : '#0a0806');
       ctx.fill();
-      ctx.strokeStyle=isSel?col:(canUnlk?'#3a3020':'#1a1610');
+      ctx.strokeStyle = isSel
+  ? col
+  : (canUnlk ? midCol : dimCol);
       ctx.lineWidth=isSel?2:1;
       ctx.stroke();
 
@@ -282,9 +334,13 @@ function drawTree(god){
     } else {
       const r=12;
       ctx.beginPath();ctx.arc(node.x,node.y,r,0,Math.PI*2);
-      ctx.fillStyle=isSel?dark:'#0a0806';
+      ctx.fillStyle = isSel
+  ? dark
+  : (canUnlk ? dimColor(col, 0.15) : '#0a0806');
       ctx.fill();
-      ctx.strokeStyle=isSel?col:(canUnlk?'#3a3020':'#1a1610');
+      ctx.strokeStyle = isSel
+  ? col
+  : (canUnlk ? midCol : dimCol);
       ctx.lineWidth=isSel?1.5:1;
       ctx.stroke();
       if(isSel){
@@ -296,7 +352,9 @@ function drawTree(god){
     ctx.shadowBlur=0;
 
     const lblY=node.y+(t==='start'?26:t==='keystone'?32:t==='minor'?26:18);
-    const textColor=isSel?col:(canUnlk?(t==='minor'?col+'aa':'#6a5a42'):'#2a2218');
+    const textColor = isSel
+  ? col
+  : (canUnlk ? midCol : dimCol);
 
     ctx.fillStyle=textColor;
     ctx.textAlign='center';
@@ -525,11 +583,20 @@ function adjustZoom(delta){
 
 /* ---- UI HELPERS ---- */
 function switchGod(god){
-  activeGod=god;
+  activeGod = god;
+
+  // Auto-select the start node
+  const startNode = gods[god].nodes.find(n => n.type === 'start');
+  if(startNode){
+    selected[god].add(startNode.id);
+  }
+
   document.getElementById('select-screen').style.display='none';
   document.getElementById('tree-screen').style.display='flex';
+
   resizeCanvas();
   resetView();
+  updateBar(); // update points display
 }
 
 function goBack(){
@@ -541,6 +608,14 @@ function goBack(){
 function resetTree(){
   if(!activeGod) return;
   selected[activeGod].clear();
+
+const startNode = gods[activeGod].nodes.find(n => n.type === 'start');
+if(startNode){
+  selected[activeGod].add(startNode.id);
+}
+
+updateBar();
+drawTree(activeGod);
 }
 
 /* ---- START ---- */
